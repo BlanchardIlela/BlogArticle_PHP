@@ -1,13 +1,14 @@
 <?php
 
 use App\Helpers\Text;
+use App\Model\Post;
 
 $title = 'Mon blog';
 $pdo = new PDO('mysql:dbname=tutoblog;host=localhost', 'root', 'root', [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
 ]);
 $query = $pdo->query('SELECT * FROM post ORDER BY created_at DESC LIMIT 12');
-$posts = $query->fetchAll(PDO::FETCH_OBJ);
+$posts = $query->fetchAll(PDO::FETCH_CLASS, Post::class);
 ?>
 
 <h1>Mon blog</h1>
@@ -17,8 +18,9 @@ $posts = $query->fetchAll(PDO::FETCH_OBJ);
         <div class="col-md-3">
             <div class="card">
                 <div class="card-body">
-                    <h5 class="card-title"><?= htmlentities($post->name) ?></h5>
-                    <p><?= nl2br(htmlentities(Text::excerpt($post->content))) ?></p>
+                    <h5 class="card-title"><?= htmlentities($post->getName()) ?></h5>
+                    <p class="text-muted"><?= $post->getCreatedAt()->format('d F Y H:i') ?></p>
+                    <p><?= $post->getExcerpt() ?></p>
                     <p>
                         <a href="#" class="btn btn-primary">Voir plus</a>
                     </p>
