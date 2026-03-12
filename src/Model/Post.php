@@ -36,4 +36,14 @@ class Post {
         return new DateTime($this->created_at);
     }
 
+    public function getSlug (): ?string
+    {
+        return $this->slug;
+    }
+
+    public function getID (): ?int
+    {
+        return $this->id;
+    }
+
 }
