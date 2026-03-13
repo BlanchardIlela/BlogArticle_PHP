@@ -19,7 +19,8 @@ $pages = ceil($count / $perPage);
 if ($currentPage > $pages) {
     throw new Exception('Cette page n\'existe pas');
 }
-$query = $pdo->query('SELECT * FROM post ORDER BY created_at DESC LIMIT ' . $perPage);
+$offset = $perPage * ($currentPage - 1); 
+$query = $pdo->query("SELECT * FROM post ORDER BY created_at DESC LIMIT $perPage OFFSET $offset");
 $posts = $query->fetchAll(PDO::FETCH_CLASS, Post::class);
 ?>
 
