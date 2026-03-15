@@ -3,27 +3,13 @@
 use App\Connexion;
 use App\Helpers\Text;
 use App\Model\Post;
+use App\URL;
 
 $title = 'Mon blog';
 $pdo = Connexion::getPDO();
 
-$page = $_GET['page'] ?? 1;
-
-if (!filter_var($page, FILTER_VALIDATE_INT)) {
-    throw new Exception('Numéro de page invalide');
-}
-
-if ($page === '1') {
-    header('Location: ' . $router->url('home'));
-    http_response_code(301);
-    exit();
-}
-
 //Numéro de page courante
-$currentPage = (int)$page;
-if ($currentPage <= 0) {
-    throw new Exception('Numéro de page invalide');
-}
+$currentPage = URL::getPositiveInt('page', 1);
 //Compter les ids
 $count = (int)$pdo->query('SELECT COUNT(id) FROM post')->fetch(PDO::FETCH_NUM)[0];
 $perPage = 12;
