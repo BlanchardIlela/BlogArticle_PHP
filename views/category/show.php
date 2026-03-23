@@ -1,22 +1,14 @@
 <?php
 
 use App\Connexion;
-use App\Model\Category;
-use App\Model\Post;
-use App\paginatedQuery;
+use App\Table\CategoryTable;
+use App\Table\PostTable;
 
 $id = (int)$params['id'];
 $slug = $params['slug'];
 
 $pdo = Connexion::getPDO();
-$query = $pdo->prepare('SELECT * FROM category WHERE id = :id');
-$query->execute(['id' => $id]);
-$query->setFetchMode(PDO::FETCH_CLASS, Category::class);
-/** @var Category|false */
-$category = $query->fetch();
-if ($category === false) {
-    throw new Exception('Aucune catégorie ne correspond à cet ID');
-}
+$category = (new CategoryTable($pdo))->find($id);
 
 if($category->getSlug() !== $slug) {
     $url = $router->url('category', ['slug' => $category->getSlug(), 'id' => $id]);
@@ -24,34 +16,8 @@ if($category->getSlug() !== $slug) {
     header('Location: ' .$url);
 }
 
-$paginationQuery = new paginatedQuery(
-    "SELECT p.* 
-    FROM post p
-    JOIN post_category pc ON pc.post_id = p.id 
-    WHERE pc.category_id = {$category->getID()}
-    ORDER BY created_at DESC",
-    "SELECT COUNT(category_id) FROM post_category WHERE category_id = {$category->getID()}"
-);
-/**
- * @avar Post[]
- */
-$posts = $paginationQuery->getItems(Post::class);
-$postsByID = [];
-foreach ($posts as $post) {
-    $postsByID[$post->getID()] = $post;
-}
-$categories = $pdo
-    ->query('SELECT c.*, pc.post_id
-             FROM post_category pc
-             JOIN category c ON c.id = pc.category_id
-             WHERE pc.post_id IN (' . implode(',', array_keys($postsByID)) . ')'
-            )->fetchAll(PDO::FETCH_CLASS, Category::class);
-// On parcours les catégories
-foreach ($categories as $category) {
-    // On trouve l'article $posts correspondant à ligne
-    // On trouve la catégorie à l'article
-    $postsByID[$category->getPostID()]->addCategory($category);
-}
+[$posts, $paginatedQuery] = (new PostTable($pdo))->findPaginatedForCategory($category->getID());
+
 $link = $router->url('category', ['id' => $category->getID(), 'slug' => $category->getSlug()])
 ?>
 
@@ -66,7 +32,7 @@ $link = $router->url('category', ['id' => $category->getID(), 'slug' => $categor
 </div>
 
 <div class="d-flex justify-content-between my-4">
-   <?= $paginationQuery->previousLink($link) ?>
-   <?= $paginationQuery->nextLink($link) ?>
+   <?= $paginatedQuery->previousLink($link) ?>
+   <?= $paginatedQuery->nextLink($link) ?>
 </div>
 
