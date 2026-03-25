@@ -19,9 +19,19 @@ $link = $router->url('admin_posts');
     <tbody>
         <?php foreach($posts as $post): ?>
             <tr>
-                <td><?= htmlentities($post->getName()) ?></td>
                 <td>
-
+                    <a href="<?= $router->url('admin_post', ['id' => $post->getID()]) ?>">
+                        <?= htmlentities($post->getName()) ?>
+                    </a>
+                </td>
+                <td>
+                    <a href="<?= $router->url('admin_post', ['id' => $post->getID()]) ?> " class="btn btn-primary">
+                        Editer
+                    </a>
+                    <a href="<?= $router->url('admin_post', ['id' => $post->getID()]) ?> " class="btn btn-danger"
+                    onclick="return confirm('Voulez vous vraiment effectuer cette action ?')">
+                        Supprimer
+                    </a>
                 </td>
             </tr>
         <?php endforeach ?>
