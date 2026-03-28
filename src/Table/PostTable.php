@@ -3,19 +3,28 @@ namespace App\Table;
 
 use App\Model\Post;
 use App\paginatedQuery;
-use App\Table\Exception\NotFoundExcept;
-use PDO;
+use Exception;
 
 class PostTable extends Table{
 
     protected $table = "post";
     protected $class = Post::class;
 
+    public function delete (int $id)
+    {
+        $query = $this->pdo->prepare("DELETE FROM {$this->table} WHERE id = ?");
+        $ok = $query->execute([$id]);
+        if ($ok === false) {
+            throw new Exception("Impossible de supprimer l'enregistrement $id dans la table {$this->table}");
+            
+        }
+    }
+
     public function findPaginated ()
     {
         $paginationQuery = new paginatedQuery(
-        "SELECT * FROM post ORDER BY created_at DESC",
-        "SELECT COUNT(id) FROM post",
+        "SELECT * FROM {$this->table} ORDER BY created_at DESC",
+        "SELECT COUNT(id) FROM {$this->table}",
         $this->pdo
         );
         $posts = $paginationQuery->getItems(Post::class);
