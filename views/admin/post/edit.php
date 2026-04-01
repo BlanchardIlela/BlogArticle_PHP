@@ -2,6 +2,7 @@
 
 use App\Connexion;
 use App\Table\PostTable;
+use App\Validator;
 
 $pdo = Connexion::getPDO();
 $postTable = new PostTable($pdo);
@@ -11,16 +12,16 @@ $success = false;
 $errors = [];
 
 if (!empty($_POST)) {
-    if (!empty($_POST['name'])) {
-        $errors['name'][] = 'Le champs titre ne peut pas être vide';
-    }
-    if (mb_strlen($_POST['name']) <= 3) {
-        $errors['name'][] = 'Le champs titre doit contenir plus de 3 caractères';
-    }
+    Validator::lang('fr');
+    $v = new Validator($_POST);
+    $v->rule('required', 'name');
+    $v->rule('lengthBetween', 'name', 3, 200);
     $post->setName($_POST['name']);
-    if (empty($errors)) {
+    if ($v->validate()) {
         $postTable->update($post);
         $success = true;
+    } else {
+        $errors = $v->errors();
     }
 }
 ?>
