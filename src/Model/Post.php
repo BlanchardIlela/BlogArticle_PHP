@@ -30,6 +30,11 @@ class Post {
         return $this;
     }
 
+      public function getContent (): ?string
+    {
+       return $this->content;
+    }
+
     public function getName (): ?string
     {
         return $this->name;
@@ -48,9 +53,22 @@ class Post {
         return nl2br(htmlentities(Text::excerpt($this->content, 60)));
     }
 
+    public function setCreatedAt (string $date): self
+    {
+        $this->created_at = $date;
+        
+        return $this;
+    }
+
     public function getCreatedAt (): DateTime
     {
         return new DateTime($this->created_at);
+    }
+
+    public function setSlug (string $slug): self
+    {
+        $this->slug = $slug;
+        return $this;
     }
 
     public function getSlug (): ?string
