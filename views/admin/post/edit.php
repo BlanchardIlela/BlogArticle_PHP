@@ -2,6 +2,7 @@
 
 use App\Connexion;
 use App\HTML\Form;
+use App\ObjectHelper;
 use App\Table\PostTable;
 use App\Validator;
 use App\Validators\PostValidator;
@@ -16,11 +17,7 @@ $errors = [];
 if (!empty($_POST)) {
     Validator::lang('fr');
     $v = new PostValidator($_POST, $postTable, $post->getID());
-    $post
-        ->setName($_POST['name'])
-        ->setContent($_POST['content'])
-        ->setSlug($_POST['slug'])
-        ->setCreatedAt($_POST['created_at']);
+    ObjectHelper::hydrae($post, $_POST, ['name', 'content', 'slug', 'created_at']);
     if ($v->validate()) {
         $postTable->update($post);
         $success = true;
