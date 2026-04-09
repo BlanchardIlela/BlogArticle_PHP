@@ -76,6 +76,13 @@ class Post {
         return $this->slug;
     }
 
+    public function setID (int $id): self
+    {
+         $this->id = $id;
+         
+         return $this;
+    }
+
     public function getID (): ?int
     {
         return $this->id;
