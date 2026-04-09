@@ -4,7 +4,6 @@ use App\Connexion;
 use App\HTML\Form;
 use App\ObjectHelper;
 use App\Table\PostTable;
-use App\Validator;
 use App\Validators\PostValidator;
 
 $pdo = Connexion::getPDO();
@@ -15,7 +14,6 @@ $success = false;
 $errors = [];
 
 if (!empty($_POST)) {
-    Validator::lang('fr');
     $v = new PostValidator($_POST, $postTable, $post->getID());
     ObjectHelper::hydrae($post, $_POST, ['name', 'content', 'slug', 'created_at']);
     if ($v->validate()) {
@@ -34,6 +32,12 @@ $form = new Form($post, $errors);
     </div>
 <?php endif ?>
 
+<?php if(isset($_GET['created'])): ?>
+    <div class="alert alert-success">
+        L'article a bien été créé
+    </div>
+<?php endif ?>
+
 
 <?php if($errors): ?>
     <div class="alert alert-danger">
@@ -43,10 +47,4 @@ $form = new Form($post, $errors);
 
 <h1>Editer l'article <?= $post->getName() ?></h1>
 
-<form action="" method="POST">
-    <?= $form->input('name', 'Titre') ?>
-    <?= $form->input('slug', 'URL') ?>
-    <?= $form->textarea('content', 'contenu') ?>
-    <?= $form->input('created_at', 'Date de création') ?>
-    <button type="submit" class="btn btn-primary">Modifier</button>
-</form>
+<?php require('_form.php') ?>
