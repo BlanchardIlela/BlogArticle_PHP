@@ -6,6 +6,7 @@ use App\Table\PostTable;
 
 Auth::check();
 
+$router->layout = "admin/layouts/default";
 $title = "Administration";
 $pdo = Connexion::getPDO();
 $link = $router->url('admin_posts');
