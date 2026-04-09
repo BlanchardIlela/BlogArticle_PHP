@@ -15,6 +15,8 @@ class Router {
      */
     private $router;
 
+    public $layout = "layouts/default";
+
     public function __construct(string $viewPath)
     {
         $this->viewPath = $viewPath;
@@ -54,7 +56,7 @@ class Router {
         ob_start();
         require $this->viewPath . DIRECTORY_SEPARATOR . $view . '.php';
         $content = ob_get_clean();
-        require $this->viewPath . DIRECTORY_SEPARATOR . 'layouts/default.php';
+        require $this->viewPath . DIRECTORY_SEPARATOR . $this->layout .'.php';
 
         return $this;
     }
