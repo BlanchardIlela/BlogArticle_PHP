@@ -2,7 +2,6 @@
 namespace App\Table;
 
 use App\Model\Category;
-use App\Table\Exception\NotFoundExcept;
 use PDO;
 
 class CategoryTable extends Table {
@@ -32,5 +31,6 @@ class CategoryTable extends Table {
             $postsByID[$category->getPostID()]->addCategory($category);
         }
     }
+   
 
 }
