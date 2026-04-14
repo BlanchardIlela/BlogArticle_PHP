@@ -1,11 +1,14 @@
 <?php
 
+use App\Auth;
 use App\Connexion;
 use App\HTML\Form;
 use App\Model\Post;
 use App\ObjectHelper;
 use App\Table\PostTable;
 use App\Validators\PostValidator;
+
+Auth::check();
 
 $errors = [];
 /**
@@ -23,7 +26,7 @@ if (!empty($_POST)) {
     $v = new PostValidator($_POST, $postTable, $post->getID());
     ObjectHelper::hydrae($post, $_POST, ['name', 'content', 'slug', 'created_at']);
     if ($v->validate()) {
-        $postTable->create($post);
+        $postTable->createPost($post);
         header('Location: ' . $router->url('admin_posts', ['id' => $post->getID()]) . '?created=1');
         exit();
     } else {

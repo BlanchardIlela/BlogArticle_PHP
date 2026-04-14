@@ -1,5 +1,6 @@
 <?php
 
+use App\Auth;
 use App\Connexion;
 use App\HTML\Form;
 use App\ObjectHelper;
@@ -11,13 +12,15 @@ $postTable = new PostTable($pdo);
 $post = $postTable->find($params['id']);
 $success = false;
 
+Auth::check();
+
 $errors = [];
 
 if (!empty($_POST)) {
     $v = new PostValidator($_POST, $postTable, $post->getID());
     ObjectHelper::hydrae($post, $_POST, ['name', 'content', 'slug', 'created_at']);
     if ($v->validate()) {
-        $postTable->update($post);
+        $postTable->updatePost($post);
         $success = true;
     } else {
         $errors = $v->errors();
