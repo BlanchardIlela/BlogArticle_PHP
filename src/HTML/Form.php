@@ -17,10 +17,11 @@ class Form {
     public function input (string $key, string $label): string
     {
         $value = $this->getValue($key);
+        $type = $key === "password" ? "password" : "text";
         return <<<HTML
          <div class="form-group">
             <label for="field{$key}">{$label}</label>
-            <input type="text" id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" value="{$value}" required>
+            <input type="{$type}" id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" value="{$value}" required>
             {$this->getErroFeedback($key)}
          </div>
 HTML; 
@@ -38,8 +39,29 @@ HTML;
          </div>
 HTML; 
     }
+
+    public function select (string $key, string $label, array $options = []): string
+    {
+        $options = [
+            1 => 'Catégorie#1',
+            2 => 'Catégorie#2'
+        ];
+        $optionsHTML = [];
+        foreach ($options as $k => $v) {
+            $optionsHTML[] = "<option value=\"$k\">$v</option>";
+        }
+        $value = $this->getValue($key);
+        $optionsHTML = implode('', $optionsHTML);
+        return <<<HTML
+         <div class="form-group">
+            <label for="field{$key}">{$label}</label>
+            <select id="field{$key}" class="{$this->getInputClass($key)}" name="{$key}" required multiple>{$optionsHTML}</select>
+            {$this->getErroFeedback($key)}
+         </div>
+HTML; 
+    }
     
-    private function getValue (string $key): ?string
+    private function getValue (string $key)
     {
         if (is_array($this->data)) {
             return $this->data[$key] ?? null;
@@ -64,23 +86,15 @@ HTML;
      private function getErroFeedback (string $key): string
     {
           if (isset($this->errors[$key])) {
-            return '<div class="invalid-feedback">' . implode('<br>', $this->errors[$key]) . '</div>';
+            if (is_array($this->errors[$key])) {
+                $error = implode('<br>', $this->errors[$key]);
+            }else{
+                $error = $this->errors[$key];
+            }
+            return '<div class="invalid-feedback">' . $error . '</div>';
         }
         return '';
     }
 
 
 }
-
-
-/**
-  <div class="form-group">
-        <label for="name">Titre</label>
-            <input type="text" class="form-control <?= isset($errors['name']) ? 'is-invalid' : '' ?> " name="name" id="" value="<?= htmlentities($post->getName() )?>">
-            <?php if(isset($errors['name'])): ?>
-                <div class="invalid-feedback">
-                    <?= implode('<br>', $errors['name']) ?>
-                </div>
-            <?php endif ?>
-    </div>
- */
