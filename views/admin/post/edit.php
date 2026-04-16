@@ -4,11 +4,14 @@ use App\Auth;
 use App\Connexion;
 use App\HTML\Form;
 use App\ObjectHelper;
+use App\Table\CategoryTable;
 use App\Table\PostTable;
 use App\Validators\PostValidator;
 
 $pdo = Connexion::getPDO();
 $postTable = new PostTable($pdo);
+$categoryTable = new CategoryTable($pdo);
+/* $categories = $categoryTable->list(); */
 $post = $postTable->find($params['id']);
 $success = false;
 
